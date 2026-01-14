@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,7 +34,7 @@
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .header p {
@@ -52,7 +53,7 @@
             background: white;
             border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             overflow: hidden;
         }
 
@@ -74,10 +75,10 @@
         .video-placeholder {
             width: 100%;
             height: 400px;
-            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
-                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
-                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
-                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
+                linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
+                linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
             background-size: 20px 20px;
             background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
             display: flex;
@@ -111,7 +112,7 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .btn:disabled {
@@ -159,15 +160,20 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .sidebar {
             background: white;
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             height: fit-content;
         }
 
@@ -234,6 +240,43 @@
             transform: scale(1.02);
         }
 
+        .suggestions-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f1f3f5;
+            border-radius: 8px;
+            min-height: 50px;
+            align-items: center;
+            overflow-x: auto;
+        }
+
+        .suggestion-label {
+            font-weight: bold;
+            color: #d32f2f;
+            /* Red-ish color from user image */
+            margin-right: 10px;
+        }
+
+        .suggestion-btn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #333;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .suggestion-btn:hover {
+            background: #e3f2fd;
+            border-color: #667eea;
+            transform: translateY(-1px);
+        }
+
         .char-highlight {
             background: linear-gradient(90deg, rgba(102, 126, 234, 0.3), rgba(102, 126, 234, 0.1));
             padding: 2px 4px;
@@ -242,11 +285,12 @@
         }
 
         @keyframes charGlow {
-            0% { 
+            0% {
                 background: rgba(102, 126, 234, 0.8);
                 transform: scale(1.1);
             }
-            100% { 
+
+            100% {
                 background: rgba(102, 126, 234, 0.1);
                 transform: scale(1);
             }
@@ -331,15 +375,15 @@
             .main-content {
                 grid-template-columns: 1fr;
             }
-            
+
             .header h1 {
                 font-size: 2rem;
             }
-            
+
             .controls {
                 justify-content: center;
             }
-            
+
             .btn {
                 padding: 10px 20px;
                 font-size: 0.9rem;
@@ -363,6 +407,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -382,9 +427,10 @@
                             <p id="placeholderText">Click "Start Camera" to begin</p>
                         </div>
                     </div>
-                    <img id="videoStream" style="display: none;" src="" alt="Video Stream">
+                    <img id="videoStream" src="/video_feed" alt="Video Stream" style="width:100%; display:none;">
+
                 </div>
-                
+
                 <div class="controls">
                     <button class="btn btn-primary" id="startBtn" onclick="startCamera()">
                         📹 Start Camera
@@ -414,6 +460,11 @@
                 <div class="sentence-display">
                     <h4>📝 Constructed Sentence</h4>
                     <div class="sentence-text" id="sentenceText">Your sentence will appear here...</div>
+
+                    <div class="suggestions-container" id="suggestionsContainer">
+                        <span class="suggestion-label">Suggestions:</span>
+                        <!-- Suggestion buttons will be added here -->
+                    </div>
                 </div>
 
                 <div class="actions">
@@ -423,7 +474,7 @@
                     <button class="btn btn-warning" onclick="clearSentence()">
                         🗑️ Clear Sentence
                     </button>
-                    
+
                     <div class="audio-player" id="audioPlayer">
                         <audio id="audioElement" controls autoplay>
                             Your browser does not support the audio element.
@@ -445,122 +496,118 @@
             notification.textContent = message;
             notification.className = `notification ${type}`;
             notification.classList.add('show');
-            
+
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 4000);
         }
 
+
         function startCamera() {
             const loading = document.getElementById('loading');
             const placeholderText = document.getElementById('placeholderText');
-            const startBtn = document.getElementById('startBtn');
-            
+
             loading.style.display = 'block';
             placeholderText.style.display = 'none';
-            startBtn.disabled = true;
 
-            fetch('/start_camera', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                cameraActive = true;
-                document.getElementById('videoStream').src = '/video_feed';
-                document.getElementById('videoStream').style.display = 'block';
-                document.getElementById('videoPlaceholder').style.display = 'none';
-                document.getElementById('startBtn').style.display = 'none';
-                document.getElementById('stopBtn').style.display = 'inline-block';
-                document.getElementById('cameraStatus').textContent = 'Active';
-                
-                // Start updating sentence display
-                updateInterval = setInterval(updateSentence, 100);
-                
-                showNotification('Camera started successfully!');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Failed to start camera', 'error');
-                loading.style.display = 'none';
-                placeholderText.style.display = 'block';
-                startBtn.disabled = false;
-            });
+            // Notify backend
+            fetch('/start_camera', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Camera started:', data);
+
+                    // Show video
+                    const video = document.getElementById('videoStream');
+                    video.style.display = 'block';
+                    video.src = '/video_feed';
+
+                    // UI updates
+                    document.getElementById('videoPlaceholder').style.display = 'none';
+                    document.getElementById('startBtn').style.display = 'none';
+                    document.getElementById('stopBtn').style.display = 'inline-block';
+                    document.getElementById('cameraStatus').textContent = 'Active';
+
+                    cameraActive = true;
+
+                    // Start polling backend
+                    updateInterval = setInterval(updateSentence, 100);
+
+                    showNotification('Camera started successfully!');
+                })
+                .catch(err => {
+                    console.error('Error starting camera:', err);
+                    showNotification('Failed to start camera backend', 'error');
+                    loading.style.display = 'none';
+                    placeholderText.style.display = 'block';
+                });
         }
 
         function stopCamera() {
-            fetch('/stop_camera', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                cameraActive = false;
-                document.getElementById('videoStream').style.display = 'none';
-                document.getElementById('videoPlaceholder').style.display = 'flex';
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('placeholderText').style.display = 'block';
-                document.getElementById('startBtn').style.display = 'inline-block';
-                document.getElementById('stopBtn').style.display = 'none';
-                document.getElementById('startBtn').disabled = false;
-                document.getElementById('cameraStatus').textContent = 'Stopped';
-                document.getElementById('currentSign').textContent = '-';
-                
-                // Hide audio player
-                document.getElementById('audioPlayer').style.display = 'none';
-                
-                // Stop updating
-                if (updateInterval) {
-                    clearInterval(updateInterval);
-                }
-                
-                showNotification('Camera stopped');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Failed to stop camera', 'error');
-            });
+            // Notify backend
+            fetch('/stop_camera', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => console.log('Camera stopped:', data))
+                .catch(err => console.error('Error stopping camera:', err));
+
+            cameraActive = false;
+
+            // Stop polling
+            if (updateInterval) clearInterval(updateInterval);
+
+            // Hide video
+            const video = document.getElementById('videoStream');
+            video.src = "";
+            video.style.display = 'none';
+
+            // Restore placeholder
+            document.getElementById('videoPlaceholder').style.display = 'flex';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('placeholderText').style.display = 'block';
+
+            // UI buttons
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('stopBtn').style.display = 'none';
+            document.getElementById('cameraStatus').textContent = 'Stopped';
+            document.getElementById('currentSign').textContent = '-';
+
+            showNotification('Camera stopped');
         }
 
         let lastSentence = '';
 
         function updateSentence() {
             if (!cameraActive) return;
-            
+
             fetch('/get_sentence')
                 .then(response => response.json())
                 .then(data => {
                     const sentenceElement = document.getElementById('sentenceText');
                     const currentSignElement = document.getElementById('currentSign');
                     const progressBar = document.getElementById('progressBar');
-                    
+
                     // Update sign display
                     currentSignElement.textContent = data.current_sign || 'nothing';
-                    
+
                     // Update progress bar
                     const percentage = (data.prediction_count / data.threshold_frames) * 100;
                     progressBar.style.width = percentage + '%';
-                    
+
                     // Handle sentence updates with dynamic highlighting
                     const currentSentence = data.sentence || 'Your sentence will appear here...';
-                    
+
                     if (currentSentence !== lastSentence) {
                         // Check if sentence grew (new character/word added)
                         if (currentSentence.length > lastSentence.length && lastSentence !== 'Your sentence will appear here...') {
                             // Highlight new characters
                             const newPart = currentSentence.slice(lastSentence.length);
                             const oldPart = lastSentence;
-                            
+
                             // Create highlighted version
                             sentenceElement.innerHTML = oldPart + `<span class="char-highlight">${newPart}</span>`;
-                            
+
                             // Add sentence glow effect
                             sentenceElement.classList.add('new-word');
-                            
+
                             // Remove highlight after animation
                             setTimeout(() => {
                                 sentenceElement.textContent = currentSentence;
@@ -570,12 +617,50 @@
                             // Direct update for deletions or first load
                             sentenceElement.textContent = currentSentence;
                         }
-                        
+
                         lastSentence = currentSentence;
+                    }
+
+                    // Update suggestions
+                    const suggestionsContainer = document.getElementById('suggestionsContainer');
+                    // Keep the label
+                    suggestionsContainer.innerHTML = '<span class="suggestion-label">Suggestions:</span>';
+
+                    if (data.suggestions && data.suggestions.length > 0) {
+                        data.suggestions.forEach(word => {
+                            const btn = document.createElement('button');
+                            btn.className = 'suggestion-btn';
+                            btn.textContent = word;
+                            btn.onclick = () => addWord(word);
+                            suggestionsContainer.appendChild(btn);
+                        });
+                    } else {
+                        const noSugg = document.createElement('span');
+                        noSugg.style.color = '#999';
+                        noSugg.style.fontStyle = 'italic';
+                        noSugg.style.fontSize = '0.9rem';
+                        noSugg.textContent = ' (type/sign to see)';
+                        suggestionsContainer.appendChild(noSugg);
                     }
                 })
                 .catch(error => console.error('Error updating sentence:', error));
         }
+
+        function addWord(word) {
+            fetch('/add_word', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ word: word })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Determine if we need to manually update local state or just let the poller handle it
+                    // Poller will pick it up on next tick.
+                    showNotification(`Added "${word}"`);
+                })
+                .catch(err => console.error('Error adding word:', err));
+        }
+
 
         function clearSentence() {
             fetch('/clear_sentence', {
@@ -584,28 +669,28 @@
                     'Content-Type': 'application/json',
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('sentenceText').textContent = 'Your sentence will appear here...';
-                document.getElementById('audioPlayer').style.display = 'none';
-                showNotification('Sentence cleared!');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Failed to clear sentence', 'error');
-            });
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('sentenceText').textContent = 'Your sentence will appear here...';
+                    document.getElementById('audioPlayer').style.display = 'none';
+                    showNotification('Sentence cleared!');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Failed to clear sentence', 'error');
+                });
         }
 
         function speakSentence() {
             const speakBtn = document.getElementById('speakBtn');
             const audioPlayer = document.getElementById('audioPlayer');
             const audioElement = document.getElementById('audioElement');
-            
+
             // Show loading state
             speakBtn.classList.add('btn-loading');
             speakBtn.disabled = true;
             speakBtn.textContent = 'Generating...';
-            
+
             showNotification('Generating speech...', 'info');
 
             fetch('/speak_sentence', {
@@ -614,49 +699,49 @@
                     'Content-Type': 'application/json',
                 }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    // Set audio source and show player
-                    audioElement.src = data.audio_url;
-                    audioPlayer.style.display = 'block';
-                    
-                    // Try to play audio
-                    audioElement.play().then(() => {
-                        showNotification('Playing speech...', 'success');
-                    }).catch(error => {
-                        console.log('Autoplay prevented, user can click play manually');
-                        showNotification('Audio generated! Click play to listen.', 'success');
-                    });
-                } else {
-                    showNotification(data.message || 'Failed to generate speech', 'error');
+                .then(response => response.json())
+                .then(data => {
+                    if (data.audio_url) {
+                        // Set audio source and show player
+                        audioElement.src = data.audio_url;
+                        audioPlayer.style.display = 'block';
+
+                        // Try to play audio
+                        audioElement.play().then(() => {
+                            showNotification('Playing speech...', 'success');
+                        }).catch(error => {
+                            console.log('Autoplay prevented, user can click play manually');
+                            showNotification('Audio generated! Click play to listen.', 'success');
+                        });
+                    } else {
+                        showNotification(data.message || 'Failed to generate speech', 'error');
+                        audioPlayer.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Failed to generate speech', 'error');
                     audioPlayer.style.display = 'none';
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('Failed to generate speech', 'error');
-                audioPlayer.style.display = 'none';
-            })
-            .finally(() => {
-                // Reset button state
-                speakBtn.classList.remove('btn-loading');
-                speakBtn.disabled = false;
-                speakBtn.textContent = '🔊 Speak Sentence';
-            });
+                })
+                .finally(() => {
+                    // Reset button state
+                    speakBtn.classList.remove('btn-loading');
+                    speakBtn.disabled = false;
+                    speakBtn.textContent = '🔊 Speak Sentence';
+                });
         }
 
         // Handle audio events
-        document.getElementById('audioElement').addEventListener('ended', function() {
+        document.getElementById('audioElement').addEventListener('ended', function () {
             showNotification('Playback completed', 'info');
         });
 
-        document.getElementById('audioElement').addEventListener('error', function() {
+        document.getElementById('audioElement').addEventListener('error', function () {
             showNotification('Audio playback error', 'error');
         });
 
         // Keyboard shortcuts
-        document.addEventListener('keydown', function(event) {
+        document.addEventListener('keydown', function (event) {
             if (event.key === 'c' || event.key === 'C') {
                 clearSentence();
             } else if (event.key === 's' || event.key === 'S') {
@@ -672,11 +757,12 @@
         });
 
         // Handle page visibility changes
-        document.addEventListener('visibilitychange', function() {
+        document.addEventListener('visibilitychange', function () {
             if (document.hidden && cameraActive) {
                 // Optionally pause when tab is not visible
             }
         });
     </script>
 </body>
+
 </html>
